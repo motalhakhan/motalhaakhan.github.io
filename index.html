@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talha - The Analyst</title>
+    <link rel="icon" href="icon/favicon2.png" type="image/png" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Show default cursor */
+        body, body * {
+            cursor: default !important;
+            /* overflow-x: hidden; */
+        }
+        
+        /* Pointer cursor for interactive elements */
+        a, button, .cyber-button, [role="button"] {
+            cursor: pointer !important;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+        html::-webkit-scrollbar,
+            body::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+            }
+        
+        /* Parallax Background */
+        .bg-parallax {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: #000;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .layer {
+            position: absolute;
+            inset: 0;
+            transition: transform 0.12s linear;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            will-change: transform;
+            pointer-events: none;
+        }
+
+        .small { 
+            width: 2px; 
+            height: 2px; 
+            opacity: 0.35; 
+        }
+
+        .big { 
+            width: 4px; 
+            height: 4px; 
+            opacity: 0.7; 
+        }
+        
+        /* Custom color classes - Navy Blue and Tan theme */
+        .text-tan { color: #d2b48c !important; }
+        .bg-tan { background-color: #d2b48c !important; }
+        .border-tan { border-color: #d2b48c !important; }
+        
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        
+        
+        /* Unique text animations */
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch-text:hover {
+            animation: glitch 0.5s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        /* Custom card design with Glass Glow Effect */
+        .data-card {
+            background: transparent;
+            backdrop-filter: blur(5px);
+            border-top: 4px solid #d2b48c;
+            border-right: 4px solid #d2b48c;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            
+        }
+        
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            /* background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.15), transparent); */
+            transition: left 0.5s;
+        }
+        
+        .data-card:hover::before {
+            left: 100%;
+        }
+        
+        .data-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            /* color: #fff */
+            /* background-color: #d2b48c; */
+            border-bottom: 4px solid #d2b48c;
+            border-left: 4px solid #d2b48c;
+            border-top: none;
+            border-right: none;
+            border-color: #d2b48c;
+            box-shadow:
+                0 0 30px rgba(210, 180, 140, 0.6),
+                0 0 60px rgba(210, 180, 140, 0.35),
+                0 18px 60px rgba(0, 0, 0, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Corner accents */
+        /* .corner-accent {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 8px solid #000000;
+        } */
+        
+        /* .corner-accent.tl { top: -1px; left: -1px; border-right: none; border-bottom: none; } 
+        .corner-accent.tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .corner-accent.bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .corner-accent.br { bottom: -1px; right: -1px; border-left: none; border-top: none; } */
+        
+        /* Typing effect */
+        .typing-text {
+            overflow: hidden;
+            /* color: #000; */
+            border-right: 3px solid #d2b48c;
+            white-space: nowrap;
+            animation: typing 3s steps(40) 1s forwards, blink 0.75s step-end infinite;
+            max-width: 0;
+            
+        }
+
+        /* .typing-text:hover{
+            color: #000;
+        } */
+        
+        @keyframes typing {
+            from { max-width: 0; }
+            to { max-width: 100%; }
+        }
+        
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        
+        /* Skill visualization */
+        .skill-icon {
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .skill-icon img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-icon:hover img {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 20px rgba(210, 180, 140, 0.8)) 
+                    drop-shadow(0 0 40px rgba(210, 180, 140, 0.4));
+        }
+        
+        /* Project cards with glass glow effect */
+        .project-card {
+            background: transparent;
+            border-top: 4px solid #d2b48c;
+            border-right: 4px solid #d2b48c;
+            border-radius: 16px;
+            position: relative;
+            backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            cursor: pointer;
+            /* border-color: rgba(210, 180, 140, 0.8); */
+            /* border-left-color: #d2b48c; */
+            border-bottom: 4px solid #d2b48c;
+            border-left: 4px solid #d2b48c;
+            border-top: none;
+            border-right: none;
+            box-shadow:
+                0 0 30px rgba(210, 180, 140, 0.6),
+                0 0 60px rgba(210, 180, 140, 0.35),
+                0 18px 60px rgba(0, 0, 0, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        
+        .project-card::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            /* border-bottom: 2px solid rgba(210, 180, 140, 0.5); */
+            /* border-right: 2px solid rgba(210, 180, 140, 0.5); */
+        }
+        
+        /* Animated stat numbers */
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #d2b48c, #fff, #d2b48c);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+        
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+        
+        /* Navigation dots */
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(210, 180, 140, 0.5);
+            border-radius: 50%;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .nav-dot.active {
+            background: #d2b48c;
+            box-shadow: 0 0 15px rgba(210, 180, 140, 0.8);
+            transform: scale(1.3);
+        }
+        
+        /* Scroll reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-100px) rotate(-5deg);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0) rotate(0);
+        }
+        
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(100px) rotate(5deg);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0) rotate(0);
+        }
+        
+        /* Data point particles */
+        /* Contact button */
+        .cyber-button {
+            position: relative;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid ;
+            border-color: #d2b48c;
+            /* border-top: 4px solid #d2b48c;
+            border-left: 4px solid #d2b48c; */
+            color: #fff;
+            padding: 15px 40px;
+            font-weight: 600;
+            /* border-radius: 12px; */
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow:
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                /* inset 0 1px 0 rgba(255, 255, 255, 0.1); */
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(210, 180, 140, 0.2), transparent);
+            transition: left 0.5s;
+            z-index: -1;
+        }
+        
+        .cyber-button:hover::before {
+            left: 100%;
+        }
+
+        .cyber-button:hover {
+            
+            /* border-bottom: 4px solid #000000;
+            border-right: 4px solid #000000; */
+            /* border-radius: 12px; */
+            background-color: #d2b48c;
+            color: #000000;
+            transform: translateY(-5px);
+            box-shadow:
+                    0 0 20px rgba(210, 180, 140, 0.8),
+                    0 0 40px rgba(210, 180, 140, 0.6),
+                    0 0 60px rgba(210, 180, 140, 0.4),
+                    0 4px 20px rgba(0, 0, 0, 0.3),
+                    /* inset 0 1px 0 rgba(241, 128, 128, 0.2);; */
+        }
+
+        
+        /* Terminal-style code block */
+        .terminal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #d2b48c;
+            /* border-radius: 12px; */
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .terminal:hover {
+            border-color: rgba(210, 180, 140, 0.7);
+            box-shadow:
+                0 0 25px rgba(210, 180, 140, 0.5),
+                0 0 50px rgba(210, 180, 140, 0.3),
+                0 15px 50px rgba(0, 0, 0, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .terminal-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        #animated-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+            radial-gradient(1200px circle at 10% 10%, rgba(210,180,140,0.12), transparent 40%),
+            radial-gradient(900px circle at 90% 30%, rgba(210,180,140,0.08), transparent 45%),
+            radial-gradient(1000px circle at 50% 90%, rgba(255,255,255,0.04), transparent 50%),
+            linear-gradient(120deg, #000000, #b4b5b6, #050505);
+            background-size: 200% 200%;
+            animation: bgMotion 18s ease-in-out infinite;
+        }
+
+        /* Smooth motion */
+        @keyframes bgMotion {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        #three-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+        } 
+        /* New Circular Text Cursor */
+        #outerCircleText {
+            color: #ffff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3000;
+            cursor: default;
+        }
+
+        #outerCircleText div {
+            position: relative;
+        }
+
+        #outerCircleText div div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            text-align: center;
+        }  
+        
+
+    </style>
+</head>
+<body>
+    <!-- Parallax Particle Background -->
+    <div class="bg-parallax">
+        <div class="layer" id="layerBack"></div>
+        <div class="layer" id="layerFront"></div>
+    </div>
+
+    <canvas id="three-bg"></canvas>
+    <div id="animated-bg"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const Portfolio = () => {
+            const [activeSection, setActiveSection] = useState(0);
+            const [stats, setStats] = useState({ projects: 0, skills: 0, hours: 0 });
+
+            useEffect(() => {
+                // Scroll reveal
+                const handleScroll = () => {
+                    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+                    reveals.forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top < window.innerHeight * 0.75) {
+                            el.classList.add('active');
+                        }
+                    });
+
+                    // Update active section
+                    const sections = ['hero', 'about', 'skills', 'projects', 'contact'];
+                    const scrollPos = window.scrollY + window.innerHeight / 2;
+                    
+                    sections.forEach((section, index) => {
+                        const element = document.getElementById(section);
+                        if (element) {
+                            const { offsetTop, offsetHeight } = element;
+                            if (scrollPos >= offsetTop && scrollPos < offsetTop + offsetHeight) {
+                                setActiveSection(index);
+                            }
+                        }
+                    });
+                };
+
+                // Animate stats counter
+                const animateStats = () => {
+                    let projectCount = 0;
+                    let skillCount = 0;
+                    let hourCount = 0;
+                    
+                    const interval = setInterval(() => {
+                        if (projectCount < 15) projectCount++;
+                        if (skillCount < 8) skillCount++;
+                        if (hourCount < 500) hourCount += 10;
+                        
+                        setStats({ projects: projectCount, skills: skillCount, hours: hourCount });
+                        
+                        if (projectCount >= 15 && skillCount >= 8 && hourCount >= 500) {
+                            clearInterval(interval);
+                        }
+                    }, 50);
+                };
+
+                window.addEventListener('scroll', handleScroll);
+                handleScroll();
+                
+                setTimeout(animateStats, 1000);
+
+                return () => {
+                    window.removeEventListener('scroll', handleScroll);
+                };
+            }, []);
+
+            const scrollToSection = (id) => {
+                document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const skills = [
+                { name: 'Python', icon: 'icon/py.svg', level: 85 },
+                { name: 'SQL', icon: 'icon/sql.svg', level: 80 },
+                { name: 'Excel', icon: 'icon/excel.svg', level: 70 },
+                { name: 'Power BI', icon: 'icon/dv.svg', level: 70 },
+                { name: 'Numpy', icon: 'icon/np.svg', level: 80 },
+                { name: 'Pandas', icon: 'icon/pd.svg', level: 85 },
+                { name: 'R', icon: 'icon/r.svg', level: 75 },
+                { name: 'Deep Learning', icon: 'icon/dl.svg', level: 70 },
+                { name: 'ML', icon: 'icon/ml.svg', level: 70 },
+                { name: 'AI', icon: 'icon/ai.svg', level: 70 },
+                { name: 'TenserFlow', icon: 'icon/tf.svg', level: 70 },
+                
+            ];
+
+            const projects = [
+                {
+                    title: '>> E-Commerce Analytics Engine',
+                    desc: 'Built a real-time analytics system processing 10k+ transactions daily. Implemented customer segmentation using K-means clustering, boosting targeted marketing efficiency by 35%.',
+                    tech: ['Python', 'SQL', 'Scikit-learn', 'Plotly'],
+                    metric: '35% ↑ Efficiency'
+                },
+                {
+                    title: '>> COVID-19 Prediction Model',
+                    desc: 'Developed LSTM neural network to forecast case trends with 92% accuracy. Created interactive dashboard for real-time visualization of predictions across multiple regions.',
+                    tech: ['TensorFlow', 'Pandas', 'Dash'],
+                    metric: '92% Accuracy'
+                },
+                {
+                    title: '>> Student Performance Analyzer',
+                    desc: 'Designed ML pipeline to identify at-risk students early. Automated report generation saving 15 hours/week for administrators while improving intervention timing.',
+                    tech: ['Python', 'XGBoost', 'Streamlit'],
+                    metric: '15hr Saved/week'
+                }
+            ];
+
+            return (
+                <div className="relative">
+                    {/* Side Navigation Dots */}
+                    <div className="fixed right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-4">
+                        {['Hero', 'About', 'Skills', 'Projects', 'Contact'].map((name, idx) => (
+                            <div 
+                                key={name}
+                                className={`nav-dot ${activeSection === idx ? 'active' : ''}`}
+                                onClick={() => scrollToSection(name.toLowerCase() === 'hero' ? 'hero' : name.toLowerCase())}
+                                title={name}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Hero Section */}
+                    <section id="hero" className="relative min-h-screen flex items-center justify-center px-8">
+                        <div className="max-w-6xl mx-auto relative z-10">
+                            <div className="mb-6">
+                                <span className="text-tan mono text-sm tracking-wider">
+                                    {'> '}INITIALIZING PORTFOLIO...
+                                </span>
+                            </div>
+                            
+                            <h1 className="text-7xl md:text-9xl font-bold mb-4 glitch-text">
+                                MO TALHA
+                                <br />
+                                <span className="text-tan">KHAN_</span>
+                            </h1>
+                            
+                            <div className="mb-8">
+                                <p className="text-2xl md:text-3xl text-white-400 mono">
+                                    <span id="element"></span>
+                                </p>
+                            </div>
+
+                            <div className="terminal mb-8 reveal max-w-2xl">
+                                <div className="terminal-header">
+                                    <div className="terminal-dot bg-red-500"></div>
+                                    <div className="terminal-dot bg-yellow-500"></div>
+                                    <div className="terminal-dot bg-green-500"></div>
+                                </div>
+                                <div className="text-white mono text-sm">
+                                    <div className="mb-2">{'> '}student@btech-it:~$ whoami</div>
+                                    <div className="text-white-400 mb-3">
+                                        Transforming raw data into actionable insights.
+                                        <br />BTech IT student with a passion for finding patterns
+                                        <br />in chaos and telling stories through numbers.
+                                    </div>
+                                    <div className="animate-pulse">{'> '}█</div>
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={() => scrollToSection('projects')}
+                                className="cyber-button mono text-sm tracking-wider"
+                            >
+                            <img src="icon/project.gif" alt="download" className="inline-block w-5 h-5 mr-2" />
+                                VIEW_PROJECTS.exe
+                            </button>
+                        </div>
+                    </section>
+
+                    {/* Stats Section */}
+                    <section className="py-20 px-8 reveal">
+                        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="data-card p-8 text-center">
+                                <div className="corner-accent tl"></div>
+                                <div className="corner-accent tr"></div>
+                                <div className="corner-accent bl"></div>
+                                <div className="corner-accent br"></div>
+                                <div className="stat-number">{stats.projects}+</div>
+                                <p className="text-tan mono text-sm">PROJECTS COMPLETED</p>
+                            </div>
+                            <div className="data-card p-8 text-center">
+                                <div className="corner-accent tl"></div>
+                                <div className="corner-accent tr"></div>
+                                <div className="corner-accent bl"></div>
+                                <div className="corner-accent br"></div>
+                                <div className="stat-number">{stats.skills}+</div>
+                                <p className="text-tan mono text-sm">TECH STACK</p>
+                            </div>
+                            <div className="data-card p-8 text-center">
+                                <div className="corner-accent tl"></div>
+                                <div className="corner-accent tr"></div>
+                                <div className="corner-accent bl"></div>
+                                <div className="corner-accent br"></div>
+                                <div className="stat-number">{stats.hours}+</div>
+                                <p className="text-tan mono text-sm">HOURS ANALYZING</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* About Section */}
+                    <section id="about" className="min-h-screen flex items-center px-8 py-20">
+                        <div className="max-w-6xl mx-auto text-center">
+                            <h2 className="text-5xl md:text-6xl font-bold mb-12 reveal">
+                                <span className="text-tan mono">{'01. '}</span>
+                                ABOUT_ME <span className= "text-tan">.md</span>
+                            </h2>
+                            
+                            <div className="grid md:grid-cols-2 gap-12">
+                                <div className="reveal-left h-full">
+                                    <div className="data-card p-8 h-full flex flex-col">
+                                        <div className="corner-accent tl"></div>
+                                        <div className="corner-accent br"></div>
+                                        
+                                        <h3 className="text-2xl font-bold mb-6 text-left text-tan">
+                                            The Journey
+                                        </h3>
+                                        <div className="space-y-4 text-gray-300 leading-relaxed flex-grow text-left">
+                                            <p>
+                                                My technical journey began with a <span className = "text-tan">Diploma in Electrical Engineering</span>, where I developed a strong foundation in core engineering principles, problem-solving, and system thinking. 
+                                                During this phase, I gained practical exposure to how real-world systems are designed and optimized.
+                                            </p>
+                                            <p>
+                                                To expand my scope into the computing and digital domain, I moved forward with a <span className= "text-tan">BTech degree in Information Technology</span>. 
+                                                Over time, my interest aligned strongly with data analytics — understanding data, extracting insights, and supporting data-driven decisions.
+                                            </p>
+                                            <p>
+                                                I am currently focused on building my skills in data analysis tools, SQL, Python, and analytical workflows through structured learning and hands-on projects.
+                                            </p>
+                                            <p className="text-tan mono text-sm">
+                                                 Always learning, always analyzing, always curious
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="reveal-right h-full">
+                                    <div className="data-card p-8 h-full flex flex-col">
+                                        <div className="corner-accent tr"></div>
+                                        <div className="corner-accent bl"></div>
+                                        
+                                        <h3 className="text-2xl font-bold mb-6 text-left text-tan">
+                                            What I Bring
+                                        </h3>
+                                        <div className="space-y-3 flex-grow">
+                                            {[
+                                                'Transform raw data into clean, analysis-ready datasets',
+                                                'Statistical analysis & hypothesis testing',
+                                                'Apply Python(Pandas, NumPy) for efficient data analysis',
+                                                'Interactive dashboard development',
+                                                'Extract actionable insights that support business decisions',
+                                                'Data visualization & storytelling',
+                                                'Database optimization & SQL queries',
+                                                'Time series forecasting & trend analysis',
+                                                'Feature engineering & data preprocessing',
+                                                'Cloud computing & big data processing',
+                                                'API integration & web scraping',
+                                                'Continuously upgrade analytical tools and techniques'
+                                            ].map((item, idx) => (
+                                                <div key={idx} className="flex items-center gap-3">
+                                                    <div className="w-2 h-2 bg-tan rotate-45"></div>
+                                                    <span className="text-gray-300">{item}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Skills Section */}
+                    <section id="skills" className="min-h-screen flex items-center px-8 py-20">
+                        <div className="max-w-6xl mx-auto w-full text-center">
+                            <h2 className="text-5xl md:text-6xl font-bold mb-12 reveal">
+                                <span className="text-tan mono">{'02. '}</span>
+                                TECH_ARSENAL <span className = "text-tan">.json</span>
+                            </h2>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-16">
+                                {skills.map((skill, idx) => (
+                                    <div 
+                                        key={skill.name}
+                                        className="reveal"
+                                        style={{ transitionDelay: `${idx * 100}ms` }}
+                                    >
+                                        <div className="skill-icon w-32 h-32 mx-auto">
+                                            <img src={skill.icon} alt={skill.name} />
+                                        </div>
+                                        <p className="text-center mt-4 font-semibold">{skill.name}</p>
+                                        <p className="text-center text-sm mono">{skill.level}%</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="data-card p-8 reveal">
+                                <div className="corner-accent tl"></div>
+                                <div className="corner-accent br"></div>
+                                <h3 className="text-xl font-bold mb-4 text-tan mono text-left">
+                                    TOOLKIT_EXTENDS = [
+                                </h3>
+                                <div className="grid md:grid-cols-2 gap-4 ml-8 text-gray-300">
+                                    <div>
+                                        <p className="mono text-sm mb-2 text-tan text-left font-bold">Analysis & Modeling</p>
+                                        <p className = "text-left">NumPy • Pandas • Scikit-learn • TensorFlow</p>
+                                    </div>
+                                    <div>
+                                        <p className="mono text-sm mb-2 text-tan text-left font-bold">Visualization</p>
+                                        <p className = "text-left">Matplotlib • Seaborn • Plotly • Tableau</p>
+                                    </div>
+                                    <div>
+                                        <p className="mono text-sm mb-2 text-tan text-left font-bold">Development</p>
+                                        <p className = "text-left">Jupyter • VS Code • Git • Docker</p>
+                                    </div>
+                                    <div>
+                                        <p className="mono text-sm mb-2 text-tan text-left font-bold">Databases</p>
+                                        <p className = "text-left">MySQL • PostgreSQL • MongoDB</p>
+                                    </div>
+                                </div>
+                                <p className="text-xl font-bold mono text-sm mt-4 text-tan text-left">]</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Projects Section */}
+                    <section id="projects" className="min-h-screen flex items-center px-8 py-20">
+                        <div className="max-w-6xl mx-auto w-full text-center">
+                            <h2 className="text-5xl md:text-6xl font-bold mb-12 reveal">
+                                <span className="text-tan mono ">{'03. '}</span>
+                                FEATURED_WORK <span className = "text-tan">.py</span>
+                            </h2>
+
+                            <div className="space-y-8">
+                                {projects.map((project, idx) => (
+                                    <div 
+                                        key={project.title}
+                                        className={`project-card p-8 ${idx % 2 === 0 ? 'reveal-left' : 'reveal-right'}`}
+                                    >
+                                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                                            <h3 className="text-2xl font-bold mono mb-2 md:mb-0">
+                                                {project.title}
+                                            </h3>
+                                            <span className="text-tan font-bold text-xl">
+                                                {project.metric}
+                                            </span>
+                                        </div>
+                                        
+                                        <p className="text-white-300 mb-6 leading-relaxed">
+                                            {project.desc}
+                                        </p>
+                                        
+                                        <div className="flex flex-wrap gap-3">
+                                            {project.tech.map(tech => (
+                                                <span 
+                                                    key={tech}
+                                                    className="px-4 py-2 bg-tan/10 border border-tan-400/30 text-tan mono text-xs"
+                                                >
+                                                    {tech}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Contact Section */}
+                    <section id="contact" className="min-h-screen flex items-center justify-center px-8 py-20">
+                        <div className="max-w-4xl mx-auto text-center">
+                            <h2 className="text-5xl md:text-6xl font-bold mb-8 reveal">
+                                <span className="text-tan mono">{'04. '}</span>
+                                CONNECT <span className = "text-tan">.sh</span>
+                            </h2>
+                            
+                            <p className="text-2xl text-white-400 mb-12 reveal">
+                                Let's transform data into decisions together
+                            </p>
+
+                            <div className="grid md:grid-cols-3 gap-6 mb-12">
+                                {[
+                                    { icon: 'icon/mail.png', label: 'EMAIL', value: 'motalhaa.khan@gmail.com', link: 'mailto:motalhaa.khan@gmail.com' },
+                                    { icon: 'icon/in.png', label: 'LINKEDIN', value: '/motalhakhan', link: 'https://linkedin.com/in/motalhakhan' },
+                                    { icon: 'icon/hub.png', label: 'GITHUB', value: '/motalhakhan', link: 'https://github.com/motalhakhan' }
+                                ].map((contact, idx) => (
+                                    <a 
+                                        key={contact.label}
+                                        href={contact.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="data-card p-6 reveal block"
+                                        style={{ transitionDelay: `${idx * 100}ms` }}
+                                    >
+                                        <img src={contact.icon} alt={contact.label} className="w-12 h-12 mb-3 mx-auto object-contain"/>
+                                        <p className="text-tan mono text-xs mb-1">{contact.label}</p>
+                                        <p className="text-sm text-white-300">{contact.value}</p>
+                                    </a>
+                                ))}
+                            </div>
+
+                            <button className="cyber-button mono text-sm tracking-wider reveal">
+                                <img src="icon/gif.gif" alt="download" className="inline-block w-5 h-5 mr-2" />
+                                DOWNLOAD_CV.pdf
+                            </button>
+
+                            <div className="mt-16 reveal active">
+                                <div className="terminal max-w-2xl mx-auto">
+                                    <div className="terminal-header">
+                                        <div className="terminal-dot bg-red-500"></div>
+                                        <div className="terminal-dot bg-yellow-500"></div>
+                                        <div className="terminal-dot bg-green-500"></div>
+                                    </div>
+                                    <p className="text-white mono text-xs text-center">
+                                        {'> '}Thanks for visiting!
+                                        <br />{'> '}© 2026 Mo Talha Khan❤️
+                                        <br /><div className="animate-pulse">{'> '}█</div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<Portfolio />, document.getElementById('root'));
+
+        // Initialize Typed.js for typing effect
+        setTimeout(() => {
+            const typed = new Typed("#element", {
+                strings: ["DATA ANALYST.....", "STORYTELLER.....", "PROBLEM SOLVER....."],
+                typeSpeed: 90,
+                backSpeed: 90,
+                backDelay: 1000,
+                loop: true,
+            });
+        }, 100);
+    </script>
+
+    <!-- Circular Text Cursor Script -->
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+
+    <script>
+        (() => {
+            const canvas = document.getElementById("three-bg");
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(
+                60,
+                window.innerWidth / window.innerHeight,
+                1,
+                1000
+            );
+
+            const renderer = new THREE.WebGLRenderer({
+                canvas,
+                alpha: true,
+                antialias: true
+            });
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            camera.position.z = 120;
+
+            /* === Geometry: Data Points === */
+            const geometry = new THREE.BufferGeometry();
+            const count = 1200;
+            const positions = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i]     = (Math.random() - 0.5) * 400;
+                positions[i + 1] = (Math.random() - 0.5) * 400;
+                positions[i + 2] = (Math.random() - 0.5) * 400;
+            }
+
+            geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({
+                color: 0xd2b48c,
+                size: 1.2,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+
+            /* === Subtle motion === */
+            let mouseX = 0;
+            let mouseY = 0;
+
+            document.addEventListener("mousemove", (e) => {
+                mouseX = (e.clientX / window.innerWidth - 0.5) * 10;
+                mouseY = (e.clientY / window.innerHeight - 0.5) * 10;
+            });
+
+            function animate() {
+                points.rotation.y += 0.0008;
+                points.rotation.x += 0.0004;
+
+                camera.position.x += (mouseX - camera.position.x) * 0.02;
+                camera.position.y += (-mouseY - camera.position.y) * 0.02;
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+    /* === Resize handling === */
+            window.addEventListener("resize", () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            })();
+            </script>
+
+            <!-- Parallax Particle Animation Script -->
+            <script>
+            const back = document.getElementById("layerBack");
+            const front = document.getElementById("layerFront");
+
+            const particles = [];
+            const mouse = { x: innerWidth/2, y: innerHeight/2 };
+
+    /* ---------- create particles ---------- */
+    function addParticles(container, count, cls, speedMin, speedMax) {
+        const frag = document.createDocumentFragment();
+
+        for (let i=0; i<count; i++) {
+            const el = document.createElement("div");
+            el.className = "particle " + cls;
+
+            const p = {
+                el,
+                x: Math.random()*innerWidth,
+                y: innerHeight + Math.random()*innerHeight*0.6,
+                vx: 0,
+                vy: speedMin + Math.random()*(speedMax-speedMin),
+                repelY: 0
+            };
+
+            frag.appendChild(el);
+            particles.push(p);
+        }
+
+        container.appendChild(frag);
+    }
+
+    /* increased but safe counts */
+    addParticles(back, 110, "small", 1.0, 1.6);
+    addParticles(front, 70, "big", 1.6, 2.4);
+
+    /* ---------- mouse move ---------- */
+    document.addEventListener("mousemove", e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+
+        const nx = (e.clientX/innerWidth - 0.5);
+        const ny = (e.clientY/innerHeight - 0.5);
+
+        back.style.transform  = `translate(${nx*18}px,${ny*18}px)`;
+        front.style.transform = `translate(${nx*36}px,${ny*36}px)`;
+    });
+
+    /* ---------- click explosion ---------- */
+    document.addEventListener("click", e => {
+        for (const p of particles) {
+            const dx = p.x - e.clientX;
+            const dy = p.y - e.clientY;
+            const d = Math.sqrt(dx*dx+dy*dy) || 1;
+            const force = 14;
+
+            p.vx += (dx/d)*force;
+            p.repelY += (dy/d)*force;
+        }
+    });
+
+    /* ---------- animation loop ---------- */
+    function step() {
+        for (const p of particles) {
+            p.y -= p.vy;
+
+            if (p.y < -30) {
+                p.y = innerHeight + 50;
+                p.x = Math.random()*innerWidth;
+                p.vx = 0;
+            }
+
+            const dx = p.x - mouse.x;
+            const dy = p.y - mouse.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const radius = 140;
+
+            if (dist < radius) {
+                const force = (radius-dist)/radius;
+                p.vx += (dx/dist) * force * 2.6;
+                p.repelY += (dy/dist) * force * 3.8;
+            }
+
+            /* damping */
+            p.vx *= 0.92;
+            p.repelY *= 0.9;
+
+            p.x += p.vx;
+            p.y += p.repelY*0.05;
+
+            p.el.style.transform = `translate3d(${p.x}px,${p.y}px,0)`;
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    step();
+    </script>
+
+    <!-- circular text script -->
+     <script>
+        ; (function () 
+            {
+
+                var msg = "MO TALHA KHAN";
+                var size = 14;
+                var circleY = 1; var circleX = 1;
+                var letter_spacing = 4;
+                var diameter = 22;
+                var rotation = 0.2;
+                var speed = 0.5;
+                if (!window.addEventListener && !window.attachEvent || !document.createElement) return;
+                msg = msg.split('');
+                var n = msg.length - 1, a = Math.round(size * diameter * 0.20), currStep = 20,
+                ymouse = a * circleY + 20, xmouse = a * circleX + 20, y = [], x = [], Y = [], X = [],
+                o = document.createElement('div'), oi = document.createElement('div'),
+                b = document.compatMode && document.compatMode != "BackCompat" ? document.documentElement : document.body,
+
+                mouse = function (e) 
+                    {
+                        e = e || window.event;
+                        ymouse = !isNaN(e.pageY) ? e.pageY : e.clientY; // y-position
+                        xmouse = !isNaN(e.pageX) ? e.pageX : e.clientX; // x-position
+                    },
+
+                makecircle = function () 
+                    { // rotation/positioning
+
+                        if (init.nopy) 
+                            {
+                                o.style.top = (b || document.body).scrollTop + 'px';
+                                o.style.left = (b || document.body).scrollLeft + 'px';
+                            };
+
+                        currStep -= rotation;
+
+                        for (var d, i = n; i > -1; --i) 
+                            { // makes the circle
+                                d = document.getElementById('iemsg' + i).style;
+                                d.top = Math.round(y[i] + a * Math.sin((currStep + i) / letter_spacing) * circleY - 15) + 'px';
+                                d.left = Math.round(x[i] + a * Math.cos((currStep + i) / letter_spacing) * circleX) + 'px';
+                            };
+
+                    },
+
+                drag = function () 
+                    { // makes the resistance
+                        y[0] = Y[0] += (ymouse - Y[0]) * speed;
+                        x[0] = X[0] += (xmouse - 20 - X[0]) * speed;
+                        for (var i = n; i > 0; --i) {
+                        y[i] = Y[i] += (y[i - 1] - Y[i]) * speed;
+                        x[i] = X[i] += (x[i - 1] - X[i]) * speed;
+                    };
+                    makecircle();
+                    },
+
+                init = function () 
+                    { // appends message divs, & sets initial values for positioning arrays
+
+                        if (!isNaN(window.pageYOffset)) 
+                            {
+                                ymouse += window.pageYOffset;
+                                xmouse += window.pageXOffset;
+                            }else init.nopy = true;
+
+                        for (var d, i = n; i > -1; --i) 
+                            {
+                                d = document.createElement('div'); d.id = 'iemsg' + i;
+                                d.style.height = d.style.width = a + 'px';
+                                d.appendChild(document.createTextNode(msg[i]));
+                                oi.appendChild(d); y[i] = x[i] = Y[i] = X[i] = 0;
+                            };
+
+                        o.appendChild(oi); document.body.appendChild(o);
+                        setInterval(drag, 25);
+
+                    },
+
+                ascroll = function () 
+                    {
+                        ymouse += window.pageYOffset;
+                        xmouse += window.pageXOffset;
+                        window.removeEventListener('scroll', ascroll, false);
+                    };
+
+                o.id = 'outerCircleText'; o.style.fontSize = size + 'px';
+
+                if (window.addEventListener) 
+                    {
+                        window.addEventListener('load', init, false);
+                        document.addEventListener('mouseover', mouse, false);
+                        document.addEventListener('mousemove', mouse, false);
+                        if (/Apple/.test(navigator.vendor))
+                        window.addEventListener('scroll', ascroll, false);
+                    }
+
+                else if (window.attachEvent) 
+                    {
+                        window.attachEvent('onload', init);
+                        document.attachEvent('onmousemove', mouse);
+                    };
+
+            })();
+    </script>
+
+</body>
+</html>
